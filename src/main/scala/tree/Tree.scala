@@ -17,7 +17,10 @@ abstract class Tree {
     case _ => new Sum(this, another)
   }
 
-  def +(value: Double) : Tree = new Sum(this, Const.by(value))
+  def +(value: Double) : Tree = value match {
+    case 0 => this
+    case _ => new Sum(this, Const.by(value))
+  }
 
   def +(name: String) : Tree = new Sum(this, new Var(name))
 
