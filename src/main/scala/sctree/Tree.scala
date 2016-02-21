@@ -10,7 +10,7 @@ abstract class Tree {
   def eval(args: Args) : Double = this match {
     case Zero => 0
     case One => 1
-    case Var(name) => args.apply(name)
+    case Var(name) => args(name)
     case Const(value) => value
     case Sum(l, r) => l.eval(args) + r.eval(args)
     case Mul(l, r) => l.eval(args) * r.eval(args)
