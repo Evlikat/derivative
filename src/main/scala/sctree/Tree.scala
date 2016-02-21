@@ -34,13 +34,22 @@ abstract class Tree {
         case _ => new Sum(this, other)
       }
     }
+    case Var(name) => other match {
+      case Var(otherName) => if (name == otherName) Mul(Const(2), Var(name)) else Sum(this, other)
+      case _ => other match {
+        case Zero => this
+        case _ => new Sum(this, other)
+      }
+    }
     case _ => other match {
       case Zero => this
       case _ => new Sum(this, other)
     }
   }
 
+  def ?(name: String) : Tree = this.+(new Var(name))
   def +(name: String) : Tree = this.+(new Var(name))
+  def ?(value: Double) : Tree = this.+(new Const(value))
   def +(value: Double) : Tree = this.+(new Const(value))
 
   def *(other: Tree) : Tree = this match {
@@ -67,10 +76,7 @@ abstract class Tree {
 
 object Tree {
 
-  def ===() = Zero
-  def ===(name: String) = Var(name)
-  def ===(value: Double) = Const(value)
-
+  def exp() = Zero
   val withNoArgs: (String => Double) = null
 }
 
