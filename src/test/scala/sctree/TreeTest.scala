@@ -15,7 +15,7 @@ class TreeTest extends FlatSpec with Matchers {
 
   "A Sum" should "correctly evaluate const and const" in {
     val expression = exp ? 4 + 5;
-    expression.eval(withNoArgs) should be(9)
+    expression.eval() should be(9)
   }
 
   "A Sum" should "correctly evaluate var and var" in {
@@ -46,6 +46,11 @@ class TreeTest extends FlatSpec with Matchers {
   "A Mul" should "have correctly derivative var1 and var2" in {
     val expression = exp ? "x" * "y"
     expression.d("x") should be(Var("y"))
+  }
+
+  "A Mul" should "have correctly two derivatives var1 and var2" in {
+    val expression = exp ? "x" * "y"
+    expression.d("x").d("y") should be(One)
   }
 
   "A Mul" should "have correctly derivative const and var2" in {

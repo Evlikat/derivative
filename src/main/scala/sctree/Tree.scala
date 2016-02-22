@@ -16,19 +16,18 @@ abstract class Tree {
     case Mul(l, r) => l.eval(args) * r.eval(args)
   }
 
+  def eval() : Double = eval(Tree.withNoArgs)
+
   def d(x: String) : Tree = this match {
-    case Zero => Zero
-    case One => Zero
+    case Zero | One | Const(value) | Var(name) if name != x => Zero
     case Var(name) if name == x => One
-    case Var(name) if name != x => Zero
-    case Const(value) => Zero
     case Sum(l, r) => l.d(x) + r.d(x)
     case Mul(l, r) => l.d(x) * r + l * r.d(x)
   }
 
   def +(other: Tree) : Tree = (this, other) match {
-    case (Zero, _) => other
-    case (_, Zero) => this
+    case (Zero, _) | (Const(0), _) => other
+    case (_, Zero) | (_, Const(0)) => this
     case (Const(value), Const(otherValue)) => Const(value + otherValue)
     case (Var(name), Var(otherName)) if name == otherName => Mul(Const(2), Var(name))
     case (Var(name), Var(otherName)) if name != otherName => Sum(this, other)
@@ -41,10 +40,9 @@ abstract class Tree {
   def +(value: Double) : Tree = this.+(new Const(value))
 
   def *(other: Tree) : Tree = (this, other) match {
-    case (Zero, _) => Zero
-    case (_, Zero) => Zero
-    case (One, _) => other
-    case (_, One) => this
+    case (Zero, _) | (_, Zero) | (Const(0), _) | (_, Const(0)) => Zero
+    case (One, _) | (Const(1), _) => other
+    case (_, One) | (_, Const(1)) => this
     case (Const(value), Const(otherValue)) => Const(value * otherValue)
     case _ => Mul(this, other)
   }
