@@ -27,7 +27,10 @@ object Exercises {
   // Elegance: 0.5 marks
   // Total: 3
   @tailrec
-  def add(x: Int, y: Int): Int = if (y > 0) add(succ(x), pred(y)) else if (y < 0) add(pred(x), succ(y)) else x
+  def add(x: Int, y: Int): Int = {
+    if (Math.abs(x) < Math.abs(y)) add(y, x) else
+    if (y > 0) add(succ(x), pred(y)) else if (y < 0) add(pred(x), succ(y)) else x
+  }
 
   // Exercise 2
   // Relative Difficulty: 2
@@ -84,7 +87,13 @@ object Exercises {
   // Performance: 1.5 marks
   // Elegance: 1 mark
   // Total: 7
-  def append[A](x: List[A], y: List[A]): List[A] = if (y.isEmpty) x else append(append(x, y.head), y.tail)
+  def append[A](x: List[A], y: List[A]): List[A] = {
+    @tailrec
+    def app[A](x: List[A], y: List[A]) : List[A] = {
+      if (x.isEmpty) y else app(x.tail, x.head :: y)
+    }
+    app(reverse(x), y)
+  }
 
   // to implement ???
   private def append[A](x: List[A], el: A): List[A] = x :+ el
@@ -138,7 +147,7 @@ object Exercises {
   // Total: 10
   def reverse[A](x: List[A]): List[A] = {
     @tailrec
-    def reverse[A](acc: List[A], x: List[A]): List[A] = if (x.isEmpty) acc else reverse(append(List(x.head), acc),x.tail)
+    def reverse[A](acc: List[A], x: List[A]): List[A] = if (x.isEmpty) acc else reverse(x.head :: acc, x.tail)
     if (x.isEmpty) Nil else reverse(Nil, x)
   }
 }
