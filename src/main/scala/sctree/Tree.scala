@@ -19,7 +19,9 @@ abstract class Tree {
   def eval() : Double = eval(Tree.withNoArgs)
 
   def d(x: String) : Tree = this match {
-    case Zero | One | Const(value) | Var(name) if name != x => Zero
+    case Zero | One => Zero
+    case Const(value) => Zero
+    case Var(name) if name != x => Zero
     case Var(name) if name == x => One
     case Sum(l, r) => l.d(x) + r.d(x)
     case Mul(l, r) => l.d(x) * r + l * r.d(x)
