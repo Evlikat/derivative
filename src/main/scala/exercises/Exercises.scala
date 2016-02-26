@@ -63,8 +63,8 @@ object Exercises {
   // Total: 7
   def map[A, B](x: List[A], f: A => B): List[B] = {
     @tailrec
-    def map[A, B](acc: List[B], x: List[A], f: A => B): List[B] = if (x.isEmpty) acc else map(append(acc, f(x.head)), x.tail, f)
-    if (x.isEmpty) Nil else map(List(f(x.head)), x.tail, f)
+    def map[A, B](acc: List[B], x: List[A], f: A => B): List[B] = if (x.isEmpty) acc else map(f(x.head) :: acc, x.tail, f)
+    if (x.isEmpty) Nil else map(Nil, reverse(x), f)
   }
 
   // Exercise 5
@@ -76,9 +76,9 @@ object Exercises {
   def filter[A](x: List[A], f: A => Boolean): List[A] = {
     @tailrec
     def filter[A](acc: List[A], x: List[A], f: A => Boolean): List[A] = {
-      if (x.isEmpty) acc else filter(if (f(x.head)) append(acc, x.head) else acc, x.tail, f)
+      if (x.isEmpty) acc else filter(if (f(x.head)) x.head :: acc else acc, x.tail, f)
     }
-    if (x.isEmpty) Nil else filter(Nil, x, f)
+    if (x.isEmpty) Nil else filter(Nil, reverse(x), f)
   }
 
   // Exercise 6
@@ -94,9 +94,6 @@ object Exercises {
     }
     app(reverse(x), y)
   }
-
-  // to implement ???
-  private def append[A](x: List[A], el: A): List[A] = x :+ el
 
   // Exercise 7
   // Relative Difficulty: 5
