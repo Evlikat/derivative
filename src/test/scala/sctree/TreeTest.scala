@@ -92,4 +92,9 @@ class TreeTest extends FlatSpec with Matchers {
     val expression = Var("x", 3) * Var("x", -3)
     expression should be(One)
   }
+
+  "A Sum" should "be correctly simplified" in {
+    val expression = Const(1) + Var("x") + Const(2)
+    expression should be(Sum(List(Const(3), Var("x"))))
+  }
 }
