@@ -102,4 +102,9 @@ class TreeTest extends FlatSpec with Matchers {
     val expression = Sum(List(Const(2) * Var("x"), Var("y", 2) * Const(3)))
     expression.toString should be("2x + 3y^2")
   }
+
+  "A toString" should "be correctly built 2" in {
+    val expression = new Sum(Const(2), Var("y")) * Const(6)
+    expression.toString should be("(2.0 + y) * 6.0")
+  }
 }

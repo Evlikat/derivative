@@ -59,6 +59,25 @@ abstract class Tree {
   def *(name: String): Tree = this.*(new Var(name))
 
   def *(value: Double): Tree = this.*(new Const(value))
+
+  override final def toString: String = this match {
+    case Zero => "0"
+    case One => "1"
+    case Const(value) => value toString
+    case Var(name, degree) => if (degree == 1) name else "%s^%.0f" format(name, degree)
+    case Sum(children) => children.map(c => c.scopedString).mkString(" + ")
+    case Mul(List(Const(v), Var(name, deg))) => "%.0f%s" format(v, Var(name, deg).toString)
+    case Mul(List(Var(name, deg), Const(v))) => "%.0f%s" format(v, Var(name, deg).toString)
+    case Mul(children) => children.map(c => c.scopedString).mkString(" * ")
+  }
+
+  protected def scopedString: String = this match {
+    case Sum(children) => children.map(c => c.scopedString).mkString("(", " + ", ")")
+    case Mul(List(Const(v), Var(name, deg))) => toString
+    case Mul(List(Var(name, deg), Const(v))) => toString
+    case Mul(children) => children.map(c => c.scopedString).mkString("(", " * ", ")")
+    case _ => toString
+  }
 }
 
 object Tree {
@@ -68,21 +87,13 @@ object Tree {
   val withNoArgs: (String => Double) = null
 }
 
-case object Zero extends Tree {
-  override def toString: String = "0"
-}
+case object Zero extends Tree
 
-case object One extends Tree {
-  override def toString: String = "1"
-}
+case object One extends Tree
 
-case class Var(name: String, degree: Double = 1) extends Tree {
-  override def toString: String = if (degree == 1) name else "%s^%.0f" format(name, degree)
-}
+case class Var(name: String, degree: Double = 1) extends Tree
 
-case class Const(value: Double) extends Tree {
-  override def toString: String = value toString
-}
+case class Const(value: Double) extends Tree
 
 case class Sum (children: List[_ <: Tree]) extends Tree {
   def this(l: Tree, r: Tree) = {
@@ -93,8 +104,6 @@ case class Sum (children: List[_ <: Tree]) extends Tree {
       case _ => List(l, r)
     })
   }
-
-  override def toString: String = children.map(c => c.toString).mkString(" + ")
 }
 
 case class Mul (children: List[_ <: Tree]) extends Tree {
@@ -105,13 +114,5 @@ case class Mul (children: List[_ <: Tree]) extends Tree {
       case (first, Mul(els2)) => first +: els2
       case _ => List(l, r)
     })
-  }
-
-  override def toString: String = {
-    children match {
-      case List(Const(v), Var(name, deg)) => "%.0f%s" format(v, children(1).toString)
-      case List(Var(name, deg), Const(v)) => "%.0f%s" format(v, children(0).toString)
-      case _ => children.map(c => c.toString).mkString(" * ")
-    }
   }
 }
